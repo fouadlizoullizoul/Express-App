@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const Blog = require('./models/blog');
+const blogRoutes =require('./routes/blogRoutes');
 //express app
 const app = express();
 //conect to db
@@ -12,8 +12,12 @@ mongoose.connect(dbURI)
     .catch((err)=> console.log("connection failed",err))
 //register view engine
 app.set('view engine', 'ejs');
+//middleware 
 app.use(express.static('public'))
+app.use(express.urlencoded({ extended:true }));
 
+//blog routes
+app.use('/blogs',blogRoutes)
 
 //rputes
 app.get('/', (req, res) => {
@@ -25,18 +29,6 @@ app.get('/about', (req, res) => {
     res.render('about',{title:"About"});
 })
 
-app.get('/blogs',(req, res) => {
-    Blog.find()
-    .then((result)=> {
-        res.render('index', {title:"All blogs", blogs:result})
-
-    })
-})
-
-
-app.get('/blogs/create',(req, res) => {
-    res.render('create',{title:"Creat a new blog"});
-})
 
 
 //404 page
